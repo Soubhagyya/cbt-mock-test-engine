@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Production-grade offline Computer-Based Test (CBT) mock exam engine with real-time timer, question palette, negative marking, and performance analytics.">
+  <title>CBT Mock Test Engine | Autonomous Offline Exam Simulator</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/cbt-engine.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="app-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      <div>
+        <h1 class="app-title">CBT Mock Test Engine</h1>
+        <span class="app-subtitle">Self-Contained Offline Exam Simulator</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="candidate-badge">
+        <span class="candidate-avatar">S</span>
+        <div class="candidate-info">
+          <span class="candidate-name">Soubhagya</span>
+          <span class="candidate-role">Roll: 2026-CBT-108</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button id="btn-theme-toggle" class="icon-btn" title="Toggle Dark/Light Mode" aria-label="Toggle Dark/Light Mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button id="btn-fullscreen" class="icon-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: HOME / TEST SELECTOR -->
+  <main id="screen-home" class="screen-container">
+    <div class="home-wrapper">
+      
+      <!-- Resume Banner if Session Exists -->
+      <section id="resume-banner" class="resume-alert hidden">
+        <div class="resume-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="resume-details">
+          <h4>Active Test Session Detected</h4>
+          <p id="resume-info">You have an ongoing test in progress.</p>
+        </div>
+        <div class="resume-actions">
+          <button id="btn-resume-test" class="btn btn-primary">Resume Test</button>
+          <button id="btn-discard-resume" class="btn btn-outline-danger">Discard</button>
+        </div>
+      </section>
+
+      <!-- Hero Header -->
+      <section class="hero-section">
+        <h2>Prepare with Authentic Exam Environment</h2>
+        <p>Experience real computer-based testing with subject tabs, interactive question palette, precision countdown timer, and positive/negative scoring analytics. Works 100% offline.</p>
+      </section>
+
+      <!-- Test Presets Grid -->
+      <section class="presets-section">
+        <div class="section-heading">
+          <h3>Select Built-in Mock Exam</h3>
+          <span class="badge">Instant Launch</span>
+        </div>
+
+        <div class="presets-grid">
+          <!-- Preset 1: STEM / JEE -->
+          <div class="preset-card">
+            <div class="preset-card-header">
+              <span class="preset-tag tag-stem">Engineering & Science</span>
+              <span class="preset-duration">⏱ 45 Mins</span>
+            </div>
+            <h4>National STEM Entrance Mock</h4>
+            <p>15 high-yield questions spanning Physics, Chemistry, and Mathematics with +4 / -1 negative marking.</p>
+            <div class="preset-meta">
+              <span><strong>15</strong> Questions</span>
+              <span><strong>3</strong> Subjects</span>
+              <span><strong>60</strong> Max Marks</span>
+            </div>
+            <button id="btn-start-jee" class="btn btn-primary btn-block">Launch STEM Mock</button>
+          </div>
+
+          <!-- Preset 2: GATE CS -->
+          <div class="preset-card">
+            <div class="preset-card-header">
+              <span class="preset-tag tag-gate">Computer Science</span>
+              <span class="preset-duration">⏱ 30 Mins</span>
+            </div>
+            <h4>GATE CS & IT Mock Exam</h4>
+            <p>15 core questions covering Data Structures, Operating Systems, and Networks with +2 / -0.66 marking.</p>
+            <div class="preset-meta">
+              <span><strong>15</strong> Questions</span>
+              <span><strong>3</strong> Sections</span>
+              <span><strong>30</strong> Max Marks</span>
+            </div>
+            <button id="btn-start-gate" class="btn btn-primary btn-block">Launch GATE CS Mock</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Custom Question Set Loader -->
+      <section class="upload-section">
+        <div class="section-heading">
+          <h3>Load Custom Question File</h3>
+          <span class="badge badge-secondary">JSON or CSV</span>
+        </div>
+
+        <div id="drop-zone" class="drop-zone">
+          <div class="drop-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <h4>Drag & Drop your question file here</h4>
+          <p>Supports formatted <strong>.json</strong> and <strong>.csv</strong> files. Runs completely on your device.</p>
+          
+          <label class="btn btn-secondary file-upload-btn">
+            Browse File
+            <input type="file" id="file-input" accept=".json,.csv" hidden>
+          </label>
+
+          <div class="template-helper">
+            <span>Want to create your own exam?</span>
+            <button id="btn-download-template" class="text-link">Download Starter CSV Template</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature Badges -->
+      <section class="features-row">
+        <div class="feature-item">
+          <div class="feat-icon">⚡</div>
+          <h5>Zero Latency Autonomy</h5>
+          <p>No backend, no internet required. All data stays strictly on your machine.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feat-icon">🛡</div>
+          <h5>Crash-Proof Persistence</h5>
+          <p>Accidental refresh or browser restart restores your timer, responses, and review flags.</p>
+        </div>
+        <div class="feature-item">
+          <div class="feat-icon">🎯</div>
+          <h5>Exact Exam Marking</h5>
+          <p>Configurable positive and negative scoring engine with detailed hand-calculated precision.</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- SCREEN 2: EXAM INTERFACE (CBT ENVIRONMENT) -->
+  <main id="screen-exam" class="screen-container hidden">
+    <div class="exam-layout">
+
+      <!-- Exam Top Control Bar -->
+      <div class="exam-topbar">
+        <div class="exam-topbar-left">
+          <h2 id="exam-title" class="exam-name">CBT Mock Examination</h2>
+          <div id="section-tabs" class="section-tabs-bar">
+            <!-- Dynamic Section Tabs injected here -->
+          </div>
+        </div>
+
+        <div class="exam-topbar-right">
+          <div id="timer-box" class="timer-display-box" title="Remaining Exam Time">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="timer-label">Time Left:</span>
+            <span id="exam-timer" class="timer-digits">00:00</span>
+          </div>
+
+          <button id="btn-toggle-palette" class="btn btn-outline-secondary palette-toggle-mobile" aria-label="Toggle Question Palette">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Palette</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Exam Split Pane -->
+      <div class="exam-split-container">
+        
+        <!-- Left: Question Paper & Actions -->
+        <div class="exam-question-pane">
+          
+          <!-- Question Header -->
+          <div class="question-header">
+            <span id="question-number" class="q-number-title">Question 1 of 15</span>
+            <div id="question-meta-badge" class="q-meta-badges">
+              <!-- Injected Section and Marks Badges -->
+            </div>
+          </div>
+
+          <!-- Question Body -->
+          <div class="question-scroll-content">
+            <div id="question-text" class="question-statement">
+              <!-- Injected Question Statement -->
+            </div>
+
+            <!-- Options Radio List -->
+            <div id="options-container" class="options-list">
+              <!-- Injected Options -->
+            </div>
+          </div>
+
+          <!-- Question Bottom Action Toolbar -->
+          <footer class="exam-action-bar">
+            <div class="action-left">
+              <button id="btn-mark-review" class="btn btn-review">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Mark for Review
+              </button>
+              <button id="btn-clear" class="btn btn-clear">Clear Response</button>
+            </div>
+
+            <div class="action-right">
+              <button id="btn-prev" class="btn btn-secondary">Previous</button>
+              <button id="btn-next" class="btn btn-secondary">Next</button>
+              <button id="btn-save-next" class="btn btn-primary">Save & Next</button>
+              <button id="btn-submit-exam" class="btn btn-submit">Submit Test</button>
+            </div>
+          </footer>
+
+        </div>
+
+        <!-- Right: Question Palette Sidebar -->
+        <aside id="palette-sidebar" class="exam-palette-pane">
+          
+          <div class="palette-header">
+            <h4>Question Palette</h4>
+            <span id="section-palette-name" class="palette-sub">Physics</span>
+          </div>
+
+          <!-- Palette Status Legend -->
+          <div class="palette-legend">
+            <div class="legend-item">
+              <span class="legend-dot status-answered"></span>
+              <span class="legend-text">Answered (<span id="count-answered">0</span>)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot status-not_answered"></span>
+              <span class="legend-text">Not Answered (<span id="count-not-answered">0</span>)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot status-not_visited"></span>
+              <span class="legend-text">Not Visited (<span id="count-not-visited">0</span>)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot status-marked_review"></span>
+              <span class="legend-text">Marked for Review (<span id="count-marked-review">0</span>)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot status-answered_marked_review"></span>
+              <span class="legend-text">Ans & Marked (<span id="count-answered-marked">0</span>)</span>
+            </div>
+          </div>
+
+          <!-- Palette Numbers Grid -->
+          <div class="palette-grid-wrapper">
+            <div id="palette-grid" class="palette-grid">
+              <!-- Buttons 1..N injected dynamically -->
+            </div>
+          </div>
+
+          <!-- Sidebar Submit Trigger -->
+          <div class="palette-footer">
+            <button onclick="document.getElementById('btn-submit-exam').click()" class="btn btn-submit btn-block">
+              Submit Test Paper
+            </button>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- SCREEN 3: RESULTS & ANALYTICS DASHBOARD -->
+  <main id="screen-result" class="screen-container hidden">
+    <div class="result-wrapper">
+
+      <!-- Results Header -->
+      <section class="result-header-card">
+        <div class="result-header-details">
+          <span class="badge badge-success">Examination Complete</span>
+          <h2 id="result-test-title">Exam Performance Scorecard</h2>
+          <p>Comprehensive computer-based testing report with section analytics, hand-calculation verification, and time tracking.</p>
+        </div>
+
+        <div class="result-header-actions">
+          <button id="btn-print-result" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Scorecard (PDF)
+          </button>
+          <button id="btn-download-report-json" class="btn btn-outline-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+          </button>
+          <button id="btn-retake-exam" class="btn btn-outline-primary">Re-take Test</button>
+          <button id="btn-home-from-results" class="btn btn-primary">Home</button>
+        </div>
+      </section>
+
+      <!-- KPI Score Summary Cards -->
+      <section class="result-kpi-grid">
+        <!-- Score Card -->
+        <div class="kpi-card kpi-score">
+          <div class="kpi-label">Total Score Achieved</div>
+          <div class="kpi-main-val">
+            <span id="result-score-value">0</span>
+            <span id="result-max-score" class="kpi-sub-val">/ 60</span>
+          </div>
+          <div class="kpi-footer">
+            <span>Score Percentage: <strong id="result-percentage">0%</strong></span>
+          </div>
+        </div>
+
+        <!-- Accuracy Card -->
+        <div class="kpi-card kpi-accuracy">
+          <div class="kpi-label">Overall Accuracy</div>
+          <div class="kpi-main-val">
+            <span id="result-accuracy">0%</span>
+          </div>
+          <div class="kpi-footer">
+            <span id="result-correct-badge" class="badge badge-success">0 Correct</span>
+            <span id="result-incorrect-badge" class="badge badge-danger">0 Incorrect</span>
+          </div>
+        </div>
+
+        <!-- Attempt Rate Card -->
+        <div class="kpi-card kpi-attempt">
+          <div class="kpi-label">Attempt Rate</div>
+          <div class="kpi-main-val">
+            <span id="result-attempted-badge">0 / 15</span>
+          </div>
+          <div class="kpi-footer">
+            <span>Questions attempted vs total</span>
+          </div>
+        </div>
+
+        <!-- Time Spent Card -->
+        <div class="kpi-card kpi-time">
+          <div class="kpi-label">Time Efficiency</div>
+          <div class="kpi-main-val">
+            <span id="result-time-spent">00:00</span>
+          </div>
+          <div class="kpi-footer">
+            <span>Avg / Question: <strong id="result-avg-time">0s</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Performance Breakdown -->
+      <section class="result-section-box">
+        <h3>Subject & Section Breakdown</h3>
+        <div class="table-responsive">
+          <table class="analytics-table">
+            <thead>
+              <tr>
+                <th>Subject / Section</th>
+                <th>Total Questions</th>
+                <th>Attempted</th>
+                <th>Correct</th>
+                <th>Incorrect</th>
+                <th>Marks Obtained</th>
+                <th>Accuracy</th>
+                <th>Time Spent</th>
+              </tr>
+            </thead>
+            <tbody id="section-summary-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Question-by-Question Detailed Review -->
+      <section class="result-review-box">
+        <div class="review-box-header">
+          <h3>Question-by-Question Solution & Analysis</h3>
+          <div class="review-filters">
+            <button class="review-filter-btn active" data-filter="all">All</button>
+            <button class="review-filter-btn" data-filter="correct">Correct</button>
+            <button class="review-filter-btn" data-filter="incorrect">Incorrect</button>
+            <button class="review-filter-btn" data-filter="unattempted">Unattempted</button>
+            <button class="review-filter-btn" data-filter="review">Marked Review</button>
+          </div>
+        </div>
+
+        <div id="review-questions-list" class="review-list">
+          <!-- Populated dynamically with solutions and explanations -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- CONFIRM SUBMISSION MODAL -->
+  <div id="submit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Confirm Test Submission</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to submit your test paper? You will not be able to modify your answers afterwards.</p>
+        
+        <div class="modal-summary-grid">
+          <div class="modal-stat-card bg-answered">
+            <span id="modal-answered" class="stat-num">0</span>
+            <span class="stat-name">Answered</span>
+          </div>
+          <div class="modal-stat-card bg-not-answered">
+            <span id="modal-not-answered" class="stat-num">0</span>
+            <span class="stat-name">Not Answered</span>
+          </div>
+          <div class="modal-stat-card bg-review">
+            <span id="modal-review" class="stat-num">0</span>
+            <span class="stat-name">Marked for Review</span>
+          </div>
+          <div class="modal-stat-card bg-not-visited">
+            <span id="modal-not-visited" class="stat-num">0</span>
+            <span class="stat-name">Not Visited</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-btn-cancel" class="btn btn-secondary">Return to Test</button>
+        <button id="modal-btn-confirm" class="btn btn-submit">Yes, Submit Paper</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING TOAST NOTIFICATION -->
+  <div id="toast-notification" class="toast-notice hidden" role="alert"></div>
+
+  <!-- Scripts: 100% Offline, Zero external CDN dependencies -->
+  <script src="js/sample-data.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/scoring.js"></script>
+  <script src="js/test-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
